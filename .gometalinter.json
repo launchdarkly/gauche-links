@@ -1,6 +1,6 @@
 {
   "Deadline": "180s",
-  "Disable": ["gocyclo", "golint", "golintx"],
+  "Disable": ["gocyclo", "golint", "golintx", "errcheck"],
   "Linters": {
     "gas": {
       "command": "gas -fmt=csv -exclude=G101,G104"
