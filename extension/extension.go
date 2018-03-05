@@ -31,7 +31,7 @@ type ExtensionConfig struct {
 var extensionBox packr.Box
 
 func init() {
-	extensionBox = packr.NewBox("source")
+	extensionBox = packr.NewBox("./source")
 }
 
 func Build(config ExtensionConfig, targetDirPath string) error {

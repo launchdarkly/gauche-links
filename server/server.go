@@ -57,7 +57,7 @@ var errorTemplate *template.Template
 var searchSpecTemplate *textTemplate.Template
 
 func init() {
-	box := packr.NewBox("static/templates")
+	box := packr.NewBox("./static/templates")
 	rootTemplate = template.Must(template.New("index").Parse(box.String("index.html")))
 	errorTemplate = template.Must(template.New("error").Parse(box.String("error.html")))
 	searchSpecTemplate = textTemplate.Must(textTemplate.New("searchSpec").Parse(box.String("search.xml")))

@@ -3,6 +3,6 @@ test: pack
 	go test ./...
 
 pack:
-	packr build
+	packr
 
 .PHONY: packr test
