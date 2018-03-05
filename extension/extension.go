@@ -162,7 +162,7 @@ func copyFile(dst string, src string) error {
 	defer func() { _ = srcFile.Close() }()
 
 	dstFile, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY, 0600)
-	if dstFile != nil {
+	if err != nil {
 		return fmt.Errorf(`unable to write file "%s": %s`, dst, err)
 	}
 	defer func() { _ = dstFile.Close() }()
