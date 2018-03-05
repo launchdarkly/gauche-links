@@ -10,6 +10,16 @@ GauchLinks redirects `<host>/<link path>` to a `destination` value loaded from a
 
 `ld.launchdarkly.com/wiki` -> `https://launchdarkly.atlassian.net/wiki`
 
+### Regexp Patterns
+GaucheLinks also supports regexp subsitution for paths, which is indicated by surround the path with `/`.  For example, one of our rules is `/pulls/(\w+)/` -> `github.com/launchdarkly/$1/pulls`.  This allows us to see ll the pull requests for a particular repo.
+
+### Prefix Patterns
+GaucheLinks will also perform prefix matches, so the rule `gh/` -> `github.com/launchdarkly/` would allow `https://gh/guache-links` to redirect to `https://github.com/launchdarkly/gauche-links`.
+
+### Fragments and Query strings
+
+If the *destination* does not specify a fragment or query string, those values will be taken from the user-provided path.  Currently, they are not combined, although it is a possible future enhancement.
+
 ## Configuration
 
 Here's an example configuration:
