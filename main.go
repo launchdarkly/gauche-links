@@ -16,6 +16,7 @@ func main() {
 	var devHost string
 	var extensionsPath string
 	var icon string
+	var name string
 
 	flag.BoolVar(&extensions, "extensions", false, "Set to true to build extensions")
 	flag.StringVar(&extensionsPath, "extensions-path", ".", "Path to place the extensions")
@@ -24,6 +25,7 @@ func main() {
 	flag.StringVar(&host, "host", "http://localhost:8080", "Production host url")
 	flag.StringVar(&devHost, "dev-host", "http://localhost:8080", "Development host url")
 	flag.StringVar(&prefix, "prefix", "go", "Link prefix")
+	flag.StringVar(&prefix, "name", "GaucheLinks", "Tool name")
 
 	flag.Parse()
 
@@ -34,6 +36,7 @@ func main() {
 			Host:    host,
 			DevHost: devHost,
 			Icon:    icon,
+			Name:    name,
 		}
 		if err := extension.Build(config, extensionsPath); err != nil {
 			fmt.Fprintf(os.Stderr, "unable to build extensions: %s\n", err)
