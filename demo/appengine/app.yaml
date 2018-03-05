@@ -1,0 +1,25 @@
+runtime: go
+api_version: go1
+env_variables:
+  GAUCHE_AIRTABLE_APIKEY: "<update me>"
+  GAUCHE_AIRTABLE_BASE: "<update me>"
+  GAUCHE_AIRTABLE_BASEID: "<update me>"
+  GAUCHE_AIRTABLE_ROOTURL: "<update me>"
+  GAUCHE_AIRTABLE_APPPATH: "<update me>"
+  GAUCHE_AIRTABLE_BASEPATH: "<update me>"
+  GAUCHE_PREFIX: go
+
+handlers:
+- url: /_favicon.png$
+  static_files: ../../static/images/favicon.png
+  upload: ../../static/images/favicon.png
+
+- url: /_extensions/(.+)$
+  static_files: build/extensions/\1
+  upload: build/extensions/.*
+  secure: always
+
+- url: /.*
+  login: required
+  script: _go_app
+  secure: always

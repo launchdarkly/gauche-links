@@ -1,0 +1,10 @@
+{
+  "Deadline": "180s",
+  "Disable": ["gocyclo", "golint", "golintx"],
+  "Linters": {
+    "gas": {
+      "command": "gas -fmt=csv -exclude=G101,G104"
+    }
+  },
+  "Vendor": true
+}

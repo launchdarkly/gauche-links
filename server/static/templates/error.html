@@ -1,0 +1,17 @@
+<html>
+<head>
+  <title>Bad Gauche Links</title>
+  <link rel="icon" type="image/png" href="/_favicon.png">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="alert alert-danger" role="alert">
+      There was an error processing your link '{{ .link.Path }}' with destination '<a href="{{ .link.Destination }}">{{.link.Destination}}</a>': {{ .err }}.  <a href="{{ .link.EditURL }}">Edit it?</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

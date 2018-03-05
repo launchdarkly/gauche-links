@@ -1,0 +1,37 @@
+version: 2
+
+# Keep this at the top to prevent notifications when config.yml is invalid
+experimental:
+  notify:
+    branches:
+      only:
+        - master
+
+jobs:
+  build:
+    working_directory: /go/src/github.com/launchdarkly/gauche-links
+    docker:
+      - image: circleci/golang:1.9
+        environment:
+          - GO_PACKAGES: >
+              github.com/jstemmer/go-junit-report
+              gopkg.in/alecthomas/gometalinter.v2
+              github.com/gobuffalo/packr/...
+          - TEST_RESULTS: /tmp/test-results
+    steps:
+      - checkout
+      - run: go get -u $GO_PACKAGES
+      - run: go get ./...
+      - run: gometalinter.v2 --install
+      - run: gometalinter.v2 ./...
+      - run:
+          name: Verify that packr files are committed
+          command: packr && git status --porcelain
+      - run: go build ./...
+      - run: mkdir -p ${TEST_RESULTS}
+      - run: |
+          trap "go-junit-report <${TEST_RESULTS}/go-test.out > ${TEST_RESULTS}/go-test-report.xml" EXIT
+          go test -race ./...| tee ${TEST_RESULTS}/go-test.out 2>&1
+      - store_test_results:
+          path: /tmp/test-results
+

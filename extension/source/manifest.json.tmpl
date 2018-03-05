@@ -1,0 +1,37 @@
+{
+  "name": "{{ .Name }}",
+  "description" : "To use, type '{{ .Prefix}}' plus a search term into the Omnibox.",
+  "version": "{{ .Version }}",
+  "applications": {
+    "gecko": {
+      "id": "{735ba023-87a7-4167-8c5d-32d3b939cd5d}"
+    }
+  },
+  "background": {
+    "scripts": ["globals.js", "jquery-3.3.1.min.js", "lodash-4.17.5.full.min.js", "event.js"],
+    "persistent": true
+  },
+  "icons": {
+    "16": "{{ .Icon }}",
+    "32": "{{ .Icon }}",
+    "48": "{{ .Icon }}",
+    "128": "{{ .Icon }}"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+  "omnibox": { "keyword" : "{{ .Prefix }}" },
+  "permissions": [
+    "*://ld/*",
+    "http://localhost/*",
+    "*://{{ .Host }}/*",
+    "activeTab",
+    "storage",
+    "tabs",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "manifest_version": 2
+}

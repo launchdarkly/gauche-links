@@ -1,0 +1,111 @@
+<html>
+<head profile="http://a9.com/-/spec/opensearch/1.1/">
+  <title>GaucheLinks</title>
+  <link rel="icon" type="image/png" href="/_favicon.png">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="search" type="application/opensearchdescription+xml" href="/_search.xml" title="Content search"/>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+          integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+          integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+          crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+          integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+          crossorigin="anonymous"></script>
+</head>
+<body>
+<script type="application/ld+json">
+</script>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <p></p>
+      <h1 class="text-center text-primary">
+        <i class="fas fa-rocket fa-flip-horizontal"></i>
+        <i class="fas fa-rocket fa-flip-horizontal"></i>
+        <i class="fas fa-rocket fa-flip-horizontal"></i>
+        GaucheLinks
+        <i class="fas fa-rocket fa-flip-horizontal"></i>
+        <i class="fas fa-rocket fa-flip-horizontal"></i>
+        <i class="fas fa-rocket fa-flip-horizontal"></i>
+
+      </h1>
+
+    {{ if eq .query "" }}
+      <a class="btn btn-outline-primary" role="button"
+         href="/_add?prefill_Path={{ .query }}&prefill_Author={{ .author }}">Add a link</a>
+    {{ else }}
+      <a class="btn btn-outline-primary" role="button"
+         href="/_add?prefill_Path={{ .query }}&prefill_Author={{ .author }}">Add <strong>{{ .prefix }}
+        /{{ .query }}</strong> as a new link</a>
+    {{ end }}
+
+    {{ $download_chrome_msg := `
+    <ol>
+      <li>Download the extension for <a href="/_chrome_extension">Chrome</a> or <a href="/_firefox_extension">Firefox</a>.
+      <li>Open <a href="chrome://extensions">chrome://extensions</a> by pasting <code>chrome://extensions</code> into your search bar.
+      <li>Drag the downloaded extension into the extensions window.
+    </ol>
+    `}}
+
+      <a href="/_edit" class="btn btn-link">Edit all links</a>
+      <div class="float-right">
+        <a class="btn btn-link btn-info text-info" data-toggle="popover" title="How to install the browser extension"
+                data-content="{{ $download_chrome_msg }}"
+        >Download Browser Extension
+        </a>
+      </div>
+
+      <p></p>
+    {{ if .links }}
+    {{ if ne .query "" }}
+      Maybe you meant one of these?
+    {{ end }}
+      <div>
+        <table class="table table-striped table-responsive table-condensed table-hover">
+          <thead>
+          <tr>
+            <th>Link</th>
+            <th>Description</th>
+            <th>Destination</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          {{ $originalURL := .originalURL }}
+          {{ $prefix := .prefix}}{{ range $l := .links }}
+          {{ $b := $l.Base }}
+          <tr>
+            <td><a href="{{ $l.Transform "" $originalURL }}">{{ $prefix }}/{{ if $l.IsRegexp }}
+              <code class="font-italic text-success">{{$l.PathString}}</code>{{ else }}{{ $b.Path }}{{ end }}</a></td>
+            <td>{{ $b.Description }}</td>
+            <td><a href="{{ $l.Transform "" $originalURL }}">{{ $b.Destination }}</a></td>
+            <td><a href="{{ $b.EditURL.String }}"><i class="far fa-sm fa-edit"></i></a></td>
+          </tr>
+          {{ end }}
+          </tbody>
+        </table>
+      </div>
+    {{ else }}
+      <div class="card">
+        <div class="card-body text-center">
+          No matches found for
+          <mark>{{ .query }}</mark>
+          .
+        </div>
+      </div>
+    {{ end }}
+    </div>
+  </div>
+</div>
+<script>
+  $(function () {
+    $('[data-toggle="popover"]').popover({html: true})
+  })
+</script>
+</body>
+</html>
