@@ -38,7 +38,11 @@ type AirTable struct {
 
 // Config defines global configuration
 type Config struct {
+	Global
 	AirTable
+}
+
+type Global struct {
 	Prefix string `default:"go"`
 }
 
@@ -62,7 +66,7 @@ func init() {
 var config Config
 
 func Start() error {
-	if err := envconfig.Process("gauche", &config); err != nil {
+	if err := envconfig.Process("gauche", &config.Global); err != nil {
 		return fmt.Errorf("unable to process environment variables: %s", err)
 	}
 	if err := envconfig.Process("gauche_airtable", &config.AirTable); err != nil {
