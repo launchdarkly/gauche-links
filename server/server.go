@@ -87,7 +87,7 @@ type LinkRecord struct {
 	AirtableID string `json:"id,omitempty"`
 	Fields     struct {
 		Path        string
-		Destination string
+		Target      string
 		Description string
 		Author      string
 	} `json:"fields"`
@@ -135,7 +135,7 @@ func getLinks(ctx context.Context) ([]links.Link, error) {
 			allLinks = append(allLinks, links.NewLink(links.BaseLink{
 				Path:        record.Fields.Path,
 				Description: record.Fields.Description,
-				Destination: record.Fields.Destination,
+				Target:      record.Fields.Target,
 				Author:      record.Fields.Author,
 				EditURL:     &editURL,
 			}))
@@ -195,7 +195,7 @@ func link(w http.ResponseWriter, r *http.Request) {
 
 			destURL, err = l.Transform(path, *r.URL)
 			if err != nil {
-				log.Warningf(ctx, `Bad url "%s" for link "%s": %s`, l.Base().Destination, l.Base().Path, err)
+				log.Warningf(ctx, `Bad url "%s" for link "%s": %s`, l.Base().Target, l.Base().Path, err)
 				if tmplErr := errorTemplate.Execute(w, map[string]interface{}{"link": l, "err": err}); tmplErr != nil {
 					http.Error(w, tmplErr.Error(), http.StatusInternalServerError)
 					return
@@ -263,7 +263,7 @@ func suggest(w http.ResponseWriter, r *http.Request) {
 			if l.MatchPrefix(query) || l.MatchDescription(query) {
 				completions = append(completions, l.Base().Path)
 				descriptions = append(descriptions, l.Base().Description)
-				urls = append(urls, l.Base().Destination)
+				urls = append(urls, l.Base().Target)
 			}
 		}
 	}

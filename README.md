@@ -6,7 +6,7 @@ GaucheLinks is a Link Shortening service similar to GoLinks (aka Google Short Li
 
 ## How does it work?
 
-GauchLinks redirects `<host>/<link path>` to a `destination` value loaded from a table.  Links are stored in an AirTable base with a table called `Links` containing tuples of `path`, `destination`, `description` and `author`.  For example,
+GauchLinks redirects `<host>/<link path>` to a `target` value loaded from a table.  Links are stored in an AirTable base with a table called `Links` containing tuples of `path`, `target`, `description` and `author`.  For example,
 
 `ld.launchdarkly.com/wiki` -> `https://launchdarkly.atlassian.net/wiki`
 
@@ -18,7 +18,7 @@ GaucheLinks will also perform prefix matches, so the rule `gh/` -> `github.com/l
 
 ### Fragments and Query strings
 
-If the *destination* does not specify a fragment or query string, those values will be taken from the user-provided path.  Currently, they are not combined, although it is a possible future enhancement.
+If the *target* does not specify a fragment or query string, those values will be taken from the user-provided path.  Currently, they are not combined, although it is a possible future enhancement.
 
 ## Configuration
 
@@ -37,7 +37,7 @@ Create an Airtable Base with a table called `Links` and the following schema:
 
 ```
 Path - Single Line Text
-Destination - Single Line Text
+Target - Single Line Text
 Description - Single Line Text
 Author - Email
 ```

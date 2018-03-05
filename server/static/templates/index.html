@@ -71,7 +71,7 @@
           <tr>
             <th>Link</th>
             <th>Description</th>
-            <th>Destination</th>
+            <th>Target</th>
             <th></th>
           </tr>
           </thead>
@@ -83,7 +83,7 @@
             <td><a href="{{ $l.Transform "" $originalURL }}">{{ $prefix }}/{{ if $l.IsRegexp }}
               <code class="font-italic text-success">{{$l.PathString}}</code>{{ else }}{{ $b.Path }}{{ end }}</a></td>
             <td>{{ $b.Description }}</td>
-            <td><a href="{{ $l.Transform "" $originalURL }}">{{ $b.Destination }}</a></td>
+            <td><a href="{{ $l.Transform "" $originalURL }}">{{ $b.Target }}</a></td>
             <td><a href="{{ $b.EditURL.String }}"><i class="far fa-sm fa-edit"></i></a></td>
           </tr>
           {{ end }}

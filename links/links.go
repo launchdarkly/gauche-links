@@ -24,7 +24,7 @@ type LinkImpl struct {
 // Link defines each individual link
 type BaseLink struct {
 	Path        string
-	Destination string
+	Target      string
 	Description string
 	Author      string
 	EditURL     *url.URL
@@ -94,9 +94,9 @@ func targetToURL(target string, originalURL url.URL) (destURL *url.URL, err erro
 	return destURL, nil
 }
 
-// Transform returns the destination for the given path, appending the rest of the path
+// Transform returns the target for the given path, appending the rest of the path
 func (l BaseLink) Transform(path string, originalURL url.URL) (*url.URL, error) {
-	destURL := l.Destination
+	destURL := l.Target
 	if len(path) > len(l.Path) {
 		destURL += path[len(l.Path):]
 	}
@@ -142,13 +142,13 @@ func (l RegexpLink) Match(path string) (bool, error) {
 	}
 }
 
-// Transform returns the destination for the given path
+// Transform returns the target for the given path
 func (l RegexpLink) Transform(path string, originalURL url.URL) (*url.URL, error) {
 	linkRegExp, err := l.GetRegexp()
 	if err != nil {
 		return &url.URL{}, err
 	}
-	return targetToURL(linkRegExp.ReplaceAllString(path, l.Destination), originalURL)
+	return targetToURL(linkRegExp.ReplaceAllString(path, l.Target), originalURL)
 }
 
 func (l RegexpLink) MatchPrefix(prefix string) bool {
