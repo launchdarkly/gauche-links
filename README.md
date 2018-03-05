@@ -2,33 +2,66 @@
 
 ## What is it?
 
-GaucheLinks is a Link Shortening service.  It includes a Chrome Extensions to provide search autocomplete when a prefix is entered in the Chrome Omnibox
+GaucheLinks is a Link Shortening service similar to GoLinks (aka Google Short Links) that was formerly available as part of Google's Gsuite.  It includes Chrome and Firefox Extensions to provide search autocomplete when a prefix is entered in the Chrome Omnibox.  The extensions allow you to redirect short links in your browser, such as `http://ld/wiki` to `https://launchdarkly.atlassian.net/wiki`.  They also allow you to search for text in the link and description when you've entered `ld` as your keyword.  The keyword choice is configurable.
 
 ## How does it work?
 
-GauchLinks redirects `<host>/<link path>` to a `destination` value loaded from a table.  Links are stored in AirTable containing tuples of `path`, `destination` and `description`.  For example,
+GauchLinks redirects `<host>/<link path>` to a `destination` value loaded from a table.  Links are stored in an AirTable base with a table called `Links` containing tuples of `path`, `destination`, `description` and `author`.  For example,
 
-`gauchelinks.launchdarkly.com/wiki` -> `https://launchdarkly.atlassian.net/wiki`
+`ld.launchdarkly.com/wiki` -> `https://launchdarkly.atlassian.net/wiki`
 
-## Installing the Chrome Extension
+## Configuration
 
-Follow the instructions below to install the latest chrome extension on your browser:
+Here's an example configuration:
 
-1. Download the latest chrome extension from the [releases](https://github.com/launchdarkly/gauche-links/releases) page.
-2. Enter `chrome://extensions` in your browser address bar.
-3. Open your downloads folder and drag the extension into the window.
+```
+GAUCHE_PREFIX: "ld"
+GAUCHE_AIRTABLE_APIKEY: "<some api key>"
+GAUCHE_AIRTABLE_APPPATH: "/appy02Y7Rb632dTvj"
+GAUCHE_AIRTABLE_BASEID: "appy02Y7Rb632dTvj"
+GAUCHE_AIRTABLE_BASEPATH: "/tbltdnv863UO1sCi3/viwgDayBfgbAaXZaW"
+GAUCHE_AIRTABLE_ROOTURL: "https://airtable.com/"
+```
 
-Simply opening the link will not work because of Chrome will not install an extension from outside the Chrome Store.   
+Create an Airtable Base with a table called `Links` and the following schema:
+
+```
+Path - Single Line Text
+Destination - Single Line Text
+Description - Single Line Text
+Author - Email
+```
+
+Then you can construct the configuration above.
+
+## Building the Chrome or Firefox Extension
+
+GaucheLinks takes can be run via the cli to build extensions for Chrome and Firefox.
+
+```guache-links -extenions -prefix <prefix> -extensions-path <where to put it> -host <the host name> -dev-host <the development host name> -version <extension version>```
+
+The sample demo appengine deploy shows how the artifacts can be made available as static links.
+
+## The Database
+
+The currently supported database backend is AirTable.  Support for Google Sheets as a backend is on the roadmap.  In fact, the original name of the project is a portmanteau of "Go Links" and "Google Sheets", but AirTable ended up being more convenient.  Unfortunately, AirTable API Keys are per user and shared across all Bases and their shared forms are public, which may make Google Sheets a more desirable backend.
+
+## Special link names
+
+The GaucheLinks website expects several special links for navigation.  You should add these to your link database.  They are listed below:
+
+```
+_add - Add a new database.  In our deployment, this links to a secret form in AirTable that enters a new value in the links table.
+_edit - Edit all the links.  This links to a private view of AirTable.
+_chrome_extension - The current Chrome extension .crx file
+_firefox_extension - The current Firefox extension .fpi file.
+```
 
 ## Deployment
 
-The LaunchDarkly GaucheLinks App runs on Google Cloud Platform.  It runs at https://gauche-links.appspot.com/ but we also have a redirection from https://gauche.launchdarkly.com.
+The GaucheLinks is currently organized to be easily deployable on the Google Cloud Platform.  There is code in the `demo/appengine` to show how to run it.  In our case at LaunchDarkly, we have a repo dedicated to deploying GaucheLinks via CircleCI, that starts with the name of our selected prefix.  Here's a reop that shows how you might deploy GuacheLinks with prefix `eg`:
 
-To deploy, run:
-
-```
-make deploy
-```
+```https://github.com/launchdarkly/eg-gauche-links```
 
 ## Development
 
@@ -40,8 +73,8 @@ gcloud components install app-engine-go
 
 ```
 
-To run the app, you run teh google cloud platform development server:
+To run the app using the google cloud platform development server:
 
-```make run```
+```cd demo/appengine && make run```
  
-Gauche links uses bootstrap 4 for styling.
+Gauche links uses (https://getbootstrap.com/)[Bootstrap 4] for styling and (https://fontawesome.com/)[FontAwesome] for icons.
