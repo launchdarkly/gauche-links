@@ -22,6 +22,7 @@ jobs:
       - checkout
       - run: go get -u $GO_PACKAGES
       - run: go get ./...
+      - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       - run: dep ensure
       - run: gometalinter.v2 --install
       - run: gometalinter.v2 ./...
