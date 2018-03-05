@@ -61,12 +61,6 @@
   packages = ["context"]
   revision = "22ae77b79946ea320088417e4d50825671d82d57"
 
-[[projects]]
-  name = "google.golang.org/appengine"
-  packages = [".","internal","internal/app_identity","internal/base","internal/datastore","internal/log","internal/memcache","internal/modules","internal/remote_api","internal/urlfetch","internal/user","log","memcache","urlfetch","user"]
-  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
-  version = "v1.0.0"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
