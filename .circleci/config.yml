@@ -21,7 +21,6 @@ jobs:
     steps:
       - checkout
       - run: go get -u $GO_PACKAGES
-      - run: go get ./...
       - run: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
       - run: dep ensure -vendor-only
       - run: gometalinter.v2 --install
@@ -33,7 +32,7 @@ jobs:
       - run: mkdir -p ${TEST_RESULTS}
       - run: |
           trap "go-junit-report <${TEST_RESULTS}/go-test.out > ${TEST_RESULTS}/go-test-report.xml" EXIT
-          go test -race ./...| tee ${TEST_RESULTS}/go-test.out 2>&1
+          go test -v -race ./...| tee ${TEST_RESULTS}/go-test.out 2>&1
       - store_test_results:
           path: /tmp/test-results
 
