@@ -87,4 +87,4 @@ To run the app using the google cloud platform development server:
 
 ```cd demo/appengine && make run```
  
-Gauche links uses (https://getbootstrap.com/)[Bootstrap 4] for styling and (https://fontawesome.com/)[FontAwesome] for icons.
+Gauche links uses [https://getbootstrap.com/](Bootstrap 4) for styling and [https://fontawesome.com/](FontAwesome) for icons.
