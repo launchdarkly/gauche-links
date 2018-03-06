@@ -25,7 +25,7 @@ func main() {
 	flag.StringVar(&host, "host", "http://localhost:8080", "Production host url")
 	flag.StringVar(&devHost, "dev-host", "http://localhost:8080", "Development host url")
 	flag.StringVar(&prefix, "prefix", "go", "Link prefix")
-	flag.StringVar(&prefix, "name", "GaucheLinks", "Tool name")
+	flag.StringVar(&name, "name", "GaucheLinks", "Extension name")
 
 	flag.Parse()
 

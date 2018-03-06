@@ -1,17 +1,15 @@
 package extension
 
 import (
+	"archive/zip"
 	"bufio"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
-
-	"archive/zip"
-
-	"io"
 
 	"github.com/gobuffalo/packr"
 	"github.com/mcuadros/go-crxmake"
