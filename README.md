@@ -63,7 +63,7 @@ The GaucheLinks website expects several special links for navigation.  You shoul
 ```
 _add - Add a new database.  In our deployment, this links to a secret form in AirTable that enters a new value in the links table.
 _edit - Edit all the links.  This links to a private view of AirTable.
-_chrome_extension - The current Chrome extension .crx file
+_chrome_extension - The current Chrome extension .zip file
 _firefox_extension - The current Firefox extension .fpi file.
 ```
 
