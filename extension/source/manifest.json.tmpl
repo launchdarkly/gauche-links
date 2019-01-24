@@ -23,7 +23,8 @@
   },
   "omnibox": { "keyword" : "{{ .Prefix }}" },
   "permissions": [
-    "*://ld/*",
+    "{{ .Prefix }}/*",
+    "*://{{ .Prefix }}/*",
     "http://localhost/*",
     "{{ .Host }}/*",
     "activeTab",

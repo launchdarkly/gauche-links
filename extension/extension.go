@@ -120,10 +120,31 @@ func Build(config ExtensionConfig, targetDirPath string) error {
 	if err != nil {
 		return fmt.Errorf("unable to create firefox extension: %s", err)
 	}
-	archive := zip.NewWriter(bufio.NewWriter(firefoxExtension))
+
+	err = zipExtension(firefoxExtension, tempDir)
+	if err != nil {
+		return fmt.Errorf("unable to create firefox extension: %s", err)
+	}
+
+	zippedChromeExtensionName := fmt.Sprintf("%s_gauche_links_extension_%s.zip", config.Prefix, config.Version)
+	zippedChromeExtension, err := os.Create(filepath.Join(targetDirPath, zippedChromeExtensionName))
+	if err != nil {
+		return fmt.Errorf("unable to create zipped chrome extension: %s", err)
+	}
+
+	err = zipExtension(zippedChromeExtension, tempDir)
+	if err != nil {
+		return fmt.Errorf("unable to create zipped chrome extension: %s", err)
+	}
+
+	return nil
+}
+
+func zipExtension(dstFile *os.File, srcDir string) error {
+	archive := zip.NewWriter(bufio.NewWriter(dstFile))
 	defer func() { _ = archive.Close() }()
 
-	err = filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -146,10 +167,7 @@ func Build(config ExtensionConfig, targetDirPath string) error {
 		_, err = io.Copy(writer, file)
 		return err
 	})
-	if err != nil {
-		return fmt.Errorf("unable to create firefox extension: %s", err)
-	}
-	return nil
+	return err
 }
 
 func copyFile(dst string, src string) error {
