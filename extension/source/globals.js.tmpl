@@ -1,4 +1,4 @@
 const ManifestData = chrome.runtime.getManifest();
-const Prefix = ManifestData.omnibox.keyword.site.replace(/\/$/, '');
+const Prefix = ManifestData.omnibox.keyword;
 const DefaultDevHost = "{{ .DevHost }}";
 const DefaultHost = "{{ .Host }}";

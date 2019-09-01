@@ -1,6 +1,8 @@
 // Save this so we can handle blocking requests for webRequest
 let SavedHostUrl;
 
+const prefix = Prefix.replace(/\/$/, '');
+
 function getHostUrl(cb) {
   chrome.storage.sync.get({
     devHost: DefaultDevHost,
@@ -70,7 +72,7 @@ chrome.omnibox.onInputChanged.addListener(
       }
       lastReceivedRequestId = requestId;
       text = text.trim(); // Ignore lead and trailing whitespace
-      const current = `<url>${Prefix}/${text}</url>`;
+      const current = `<url>${prefix}/${text}</url>`;
       const results = [];
       if (request.status === 401 || request.status === 302) {
         chrome.omnibox.setDefaultSuggestion({ description: formatDescription("<match>Cannot show suggestions until you log in.  Hit Enter.</match>") });
@@ -85,14 +87,14 @@ chrome.omnibox.onInputChanged.addListener(
             const isRegexp = path[0] === "/" && path[path.length-1] === "/";
             let result = {
               content: path,
-              description: formatDescription(`<url>${Prefix}/${pathWithMatch}</url> · ${descriptionWithMatch}`),
+              description: formatDescription(`<url>${prefix}/${pathWithMatch}</url> · ${descriptionWithMatch}`),
             };
             if (isRegexp) {
               const pattern = path.slice(1, -1);
               const patternWithMatch = pattern.replace(new RegExp(`^(${text})`), "<match>$1</match>");
               result = {
                 content: `${'\u200B'.repeat(i)}${extendMatch(text, pattern)}`, // Use zero-width spaces to make these unique
-                description: formatDescription(`<dim><url>${Prefix}/${patternWithMatch}</url></dim> · ${descriptionWithMatch}`),
+                description: formatDescription(`<dim><url>${prefix}/${patternWithMatch}</url></dim> · ${descriptionWithMatch}`),
               };
             }
             if (path === text && !isRegexp) {
@@ -186,5 +188,5 @@ chrome.storage.onChanged.addListener(function() {
   setTimeout(getHostUrl);
 });
 
-const requestUrlsFilter = {urls: ['*://' + Prefix + '/*'], types: ["main_frame"]};
+const requestUrlsFilter = {urls: ['*://' + prefix + '/*'], types: ["main_frame"]};
 chrome.webRequest.onBeforeRequest.addListener(redirectRequest, requestUrlsFilter, ["blocking"]);
