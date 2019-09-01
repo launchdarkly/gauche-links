@@ -39,6 +39,24 @@ function getSuggestions(text, cb) {
 let currentRequestId = 0;
 let lastReceivedRequestId = 0;
 
+// from https://stackoverflow.com/questions/822452/strip-html-from-text-javascript
+function stripTags(text) {
+  const div = document.createElement("div");
+  div.innerHTML = text;
+  return div.textContent || div.innerText || "";
+}
+
+// from https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+const isFirefox = typeof window["InstallTrigger"] !== 'undefined';
+
+// firefox doesn't support <match>, <url> and <dim> tags in descriptions
+function formatDescription(description) {
+  if (isFirefox) {
+    return stripTags(description);
+  }
+  return description;
+}
+
 // This event is fired each time the user updates the text in the omnibox,
 // as long as the extension's keyword mode is still active.
 chrome.omnibox.onInputChanged.addListener(
@@ -55,7 +73,7 @@ chrome.omnibox.onInputChanged.addListener(
       const current = `<url>${Prefix}/${text}</url>`;
       const results = [];
       if (request.status === 401 || request.status === 302) {
-        chrome.omnibox.setDefaultSuggestion({ description: "<match>Cannot show suggestions until you log in.  Hit Enter.</match>" });
+        chrome.omnibox.setDefaultSuggestion({ description: formatDescription("<match>Cannot show suggestions until you log in.  Hit Enter.</match>") });
       } else {
         if (response[1]) {
           let exactMatch;
@@ -67,14 +85,14 @@ chrome.omnibox.onInputChanged.addListener(
             const isRegexp = path[0] === "/" && path[path.length-1] === "/";
             let result = {
               content: path,
-              description: `<url>${Prefix}/${pathWithMatch}</url> · ${descriptionWithMatch}`,
+              description: formatDescription(`<url>${Prefix}/${pathWithMatch}</url> · ${descriptionWithMatch}`),
             };
             if (isRegexp) {
               const pattern = path.slice(1, -1);
               const patternWithMatch = pattern.replace(new RegExp(`^(${text})`), "<match>$1</match>");
               result = {
                 content: `${'\u200B'.repeat(i)}${extendMatch(text, pattern)}`, // Use zero-width spaces to make these unique
-                description: `<dim><url>${Prefix}/${patternWithMatch}</url></dim> · ${descriptionWithMatch}`,
+                description: formatDescription(`<dim><url>${Prefix}/${patternWithMatch}</url></dim> · ${descriptionWithMatch}`),
               };
             }
             if (path === text && !isRegexp) {
@@ -89,12 +107,12 @@ chrome.omnibox.onInputChanged.addListener(
           });
           if (exactMatch !== undefined) {
             const description = response[2][exactMatch];
-            chrome.omnibox.setDefaultSuggestion({ description: `<match>${current}</match> · ${description}` });
+            chrome.omnibox.setDefaultSuggestion({ description: formatDescription(`<match>${current}</match> · ${description}`) });
           } else {
-            chrome.omnibox.setDefaultSuggestion({ description: `Add new link <match><url>${current}</url></match>` });
+            chrome.omnibox.setDefaultSuggestion({ description: formatDescription(`Add new link <match><url>${current}</url></match>`) });
           }
         } else {
-          chrome.omnibox.setDefaultSuggestion({ description: `Add new link <match><url>${current}</url></match>` });
+          chrome.omnibox.setDefaultSuggestion({ description: formatDescription(`Add new link <match><url>${current}</url></match>`) });
         }
       }
       suggest(results);
