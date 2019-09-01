@@ -29,5 +29,5 @@ repos:
         language: system
         entry: make packr
         pass_filenames: false
-        files: '^.*\.(js|html)$'
+        files: '^.*\.(js|html|xml)$'
         require_serial: true # this may change files so we run it by itself
