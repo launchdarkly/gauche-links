@@ -1,7 +1,7 @@
 // Save this so we can handle blocking requests for webRequest
 let SavedHostUrl;
 
-const prefix = Prefix.replace(/\/$/, '');
+const prefix = Keyword.replace(/\/$/, '');
 
 function getHostUrl(cb) {
   chrome.storage.sync.get({
