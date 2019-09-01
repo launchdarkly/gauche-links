@@ -42,6 +42,7 @@ type Config struct {
 
 type Global struct {
 	Prefix string `default:"go"`
+	Host   string
 }
 
 // LinkCacheKey is the key for the links items in the cache
@@ -236,6 +237,7 @@ func link(w http.ResponseWriter, r *http.Request) {
 		"prefix":      config.Prefix,
 		"query":       path,
 		"author":      u.Email,
+		"host":        config.Host,
 		"originalURL": r.URL,
 	}
 
@@ -286,7 +288,11 @@ func suggest(w http.ResponseWriter, r *http.Request) {
 func searchSpec(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/xml")
 
-	if tmplErr := searchSpecTemplate.Execute(w, nil); tmplErr != nil {
+	templateData := map[string]interface{}{
+		"host": config.Host,
+	}
+
+	if tmplErr := searchSpecTemplate.Execute(w, templateData); tmplErr != nil {
 		http.Error(w, tmplErr.Error(), http.StatusInternalServerError)
 	}
 }

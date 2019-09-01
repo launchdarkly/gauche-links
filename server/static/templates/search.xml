@@ -3,7 +3,7 @@
     <ShortName>LD GaucheLinks</ShortName>
     <Description>LaunchDarkly GaucheLinks</Description>
     <InputEncoding>UTF-8</InputEncoding>
-    <Image width="16" height="16" type="image/x-icon">/_favicon.png</Image>
+    <Image width="16" height="16" type="image/x-icon">{{ .host }}/_favicon.png</Image>
     <Url type="application/rss+xml" method="GET" template="/{searchTerms}"/>
     <Url type="application/x-opensearch+xml" method="GET" template="/{searchTerms}"/>
 </OpenSearchDescription>

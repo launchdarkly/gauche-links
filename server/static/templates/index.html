@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="search" type="application/opensearchdescription+xml" href="/_search.xml" title="Content search"/>
+  <link rel="search" type="application/opensearchdescription+xml" href="{{ .host }}/_search.xml" title="Content search"/>
   <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
           integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -40,8 +40,7 @@
          href="/_add?prefill_Path={{ .query }}&prefill_Author={{ .author }}">Add a link</a>
     {{ else }}
       <a class="btn btn-outline-primary" role="button"
-         href="/_add?prefill_Path={{ .query }}&prefill_Author={{ .author }}">Add <strong>{{ .prefix }}
-        /{{ .query }}</strong> as a new link</a>
+         href="/_add?prefill_Path={{ .query }}&prefill_Author={{ .author }}">Add <strong>{{ .prefix }}/{{ .query }}</strong> as a new link</a>
     {{ end }}
 
     {{ $download_chrome_msg := `
