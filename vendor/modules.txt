@@ -10,7 +10,7 @@ github.com/gobuffalo/packr
 github.com/gobuffalo/packr/packr
 github.com/gobuffalo/packr/packr/cmd
 github.com/gobuffalo/packr/builder
-# github.com/golang/protobuf v1.0.0
+# github.com/golang/protobuf v1.2.0
 github.com/golang/protobuf/proto
 # github.com/gorilla/context v0.0.0-20160226214623-1ea25387ff6f
 github.com/gorilla/context
@@ -36,11 +36,11 @@ github.com/spf13/cobra
 github.com/spf13/pflag
 # github.com/stretchr/testify v1.2.2
 github.com/stretchr/testify/assert
-# golang.org/x/net v0.0.0-20180306060152-d25186b37f34
+# golang.org/x/net v0.0.0-20180724234803-3673e40ba225
 golang.org/x/net/context
 # golang.org/x/sync v0.0.0-20190423024810-112230192c58
 golang.org/x/sync/errgroup
-# google.golang.org/appengine v1.0.0
+# google.golang.org/appengine v1.6.0
 google.golang.org/appengine
 google.golang.org/appengine/log
 google.golang.org/appengine/memcache

@@ -13,10 +13,10 @@ import (
 	"time"
 
 	"github.com/fabioberger/airtable-go"
-
+	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
-
 	"github.com/kelseyhightower/envconfig"
+
 	"github.com/launchdarkly/gauche-links/framework"
 	"github.com/launchdarkly/gauche-links/framework/log"
 	"github.com/launchdarkly/gauche-links/framework/memcache"
@@ -55,14 +55,19 @@ var errorTemplate *template.Template
 var searchSpecTemplate *textTemplate.Template
 
 func init() {
-	rootTemplate = template.Must(template.New("index").ParseFiles("templates/index.html"))
-	errorTemplate = template.Must(template.New("error").Parse("templates/error.html"))
-	searchSpecTemplate = textTemplate.Must(textTemplate.New("searchSpec").Parse("templates/search.xml"))
+	box := packr.NewBox("./static/templates")
+	rootTemplate = template.Must(template.New("index").Parse(box.String("index.html")))
+	errorTemplate = template.Must(template.New("error").Parse(box.String("error.html")))
+	searchSpecTemplate = textTemplate.Must(textTemplate.New("searchSpec").Parse(box.String("search.xml")))
+
+	if err := start(); err != nil {
+		panic(err)
+	}
 }
 
 var config Config
 
-func Start() error {
+func start() error {
 	if err := envconfig.Process("gauche", &config.Global); err != nil {
 		return fmt.Errorf("unable to process environment variables: %s", err)
 	}
@@ -71,8 +76,10 @@ func Start() error {
 	}
 
 	r := mux.NewRouter()
+	r.Use(requireUser)
 	r.HandleFunc("/_search", suggest).Methods("GET")
 	r.HandleFunc("/_search.xml", searchSpec).Methods("GET")
+	r.HandleFunc("/_logout", logout).Methods("GET")
 	r.PathPrefix("/").HandlerFunc(link).Methods("GET")
 
 	http.Handle("/", r)
@@ -282,4 +289,24 @@ func searchSpec(w http.ResponseWriter, r *http.Request) {
 	if tmplErr := searchSpecTemplate.Execute(w, nil); tmplErr != nil {
 		http.Error(w, tmplErr.Error(), http.StatusInternalServerError)
 	}
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	ctx := framework.NewContext(r)
+	logoutURL, err := user.LogoutURL(ctx, "/")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	http.Redirect(w, r, logoutURL, http.StatusTemporaryRedirect)
+}
+
+func requireUser(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := framework.NewContext(r)
+		if user.Current(ctx) == nil {
+			http.Error(w, "expected user to be logged in", http.StatusInternalServerError)
+			return
+		}
+		h.ServeHTTP(w, r)
+	})
 }

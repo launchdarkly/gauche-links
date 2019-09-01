@@ -24,3 +24,10 @@ repos:
         language: system
         entry: go mod verify
         pass_filenames: false
+      - id: pack
+        name: Run packr
+        language: system
+        entry: make packr
+        pass_filenames: false
+        files: '^.*\.(js|html)$'
+        require_serial: true # this may change files so we run it by itself

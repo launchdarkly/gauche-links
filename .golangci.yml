@@ -13,3 +13,5 @@ issues:
 
 run:
   modules-download-mode: readonly
+  skip-files:
+    - ".*-packr.go$"
