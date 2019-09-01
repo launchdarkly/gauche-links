@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
+                       xmlns:moz="http://www.mozilla.org/2006/browser/search/">
     <ShortName>LD GaucheLinks</ShortName>
     <Description>LaunchDarkly GaucheLinks</Description>
     <InputEncoding>UTF-8</InputEncoding>
     <Image width="16" height="16" type="image/x-icon">{{ .host }}/_favicon.png</Image>
-    <Url type="application/rss+xml" method="GET" template="/{searchTerms}"/>
-    <Url type="application/x-opensearch+xml" method="GET" template="/{searchTerms}"/>
+    <Url type="application/opensearchdescription+xml" rel="self" template="{{ .host }}/_search.xml" />
+    <Url type="application/rss+xml" method="GET" template="{{ .host }}/{searchTerms}"/>
+    <Url type="text/html" method="GET" template="{{ .host }}/{searchTerms}"/>
+    <Url type="application/x-moz-keywordsearch" method="GET" template="{{ .host }}/{searchTerms}"/>
+    <Url type="application/x-opensearch+xml" method="GET" template="{{ .host }}/{searchTerms}"/>
+    <Url type="application/x-suggestions+json" template="{{ .host }}/_suggest?q={searchTerms}"/>
+    <moz:SearchForm>{{ .host }}</moz:SearchForm>
 </OpenSearchDescription>
