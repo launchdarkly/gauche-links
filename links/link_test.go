@@ -25,6 +25,7 @@ func TestBaseLinkMatch(t *testing.T) {
 	}
 
 	for _, s := range specs {
+		s := s
 		t.Run(fmt.Sprintf("%s match %s", s.path, s.link), func(t *testing.T) {
 			link := NewLink(BaseLink{Path: s.link})
 			actualMatch, err := link.Match(s.path)
@@ -51,6 +52,7 @@ func TestBaseLinkMatchPrefix(t *testing.T) {
 	}
 
 	for _, s := range specs {
+		s := s
 		t.Run(fmt.Sprintf("%s match %s", s.path, s.link), func(t *testing.T) {
 			link := NewLink(BaseLink{Path: s.link})
 			actualMatch := link.MatchPrefix(s.path)
@@ -74,6 +76,7 @@ func TestBaseLinkTransform(t *testing.T) {
 	}
 
 	for _, s := range specs {
+		s := s
 		t.Run(fmt.Sprintf("%s (%s) -> %s", s.path, s.originalURL.String(), s.target), func(t *testing.T) {
 			link := NewLink(BaseLink{Path: s.linkPath, Target: s.target})
 			actualURL, err := link.Transform(s.path, s.originalURL)

@@ -48,7 +48,7 @@ Then you can construct the configuration above.
 
 GaucheLinks takes can be run via the cli to build extensions for Chrome and Firefox.
 
-```guache-links -extenions -prefix <prefix> -extensions-path <where to put it> -host <the host name> -dev-host <the development host name> -version <extension version>```
+```gauche-links -extensions -prefix <prefix> -extensions-path <where to put it> -host <the host name> -dev-host <the development host name> -version <extension version>```
 
 The sample demo appengine deploy shows how the artifacts can be made available as static links.
 

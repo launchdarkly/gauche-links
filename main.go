@@ -30,7 +30,7 @@ func main() {
 	flag.Parse()
 
 	if extensions {
-		config := extension.ExtensionConfig{
+		config := extension.Config{
 			Prefix:  prefix,
 			Version: version,
 			Host:    host,

@@ -64,15 +64,16 @@ func (l BaseLink) MatchDescription(path string) bool {
 }
 
 func targetToURL(target string, originalURL url.URL) (destURL *url.URL, err error) {
-	if strings.HasPrefix(target, "https://") || strings.HasPrefix(target, "http://") {
+	switch {
+	case strings.HasPrefix(target, "https://"), strings.HasPrefix(target, "http://"):
 		if destURL, err = url.Parse(target); err != nil {
 			return nil, err
 		}
-	} else if strings.HasPrefix(target, "/") {
+	case strings.HasPrefix(target, "/"):
 		if destURL, err = url.Parse(target); err != nil {
 			return nil, err
 		}
-	} else {
+	default:
 		if destURL, err = url.Parse("https://" + target); err != nil {
 			return nil, err
 		}
@@ -110,7 +111,6 @@ func (l BaseLink) MatchPrefix(prefix string) bool {
 func NewLink(link BaseLink) Link {
 	if link.IsRegexp() {
 		return RegexpLink{link}
-	} else {
-		return link
 	}
+	return link
 }

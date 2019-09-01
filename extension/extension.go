@@ -17,7 +17,7 @@ import (
 
 const TemplateSuffix = ".tmpl"
 
-type ExtensionConfig struct {
+type Config struct {
 	DevHost string
 	Host    string
 	Icon    string
@@ -32,7 +32,7 @@ func init() {
 	extensionBox = packr.NewBox("./source")
 }
 
-func Build(config ExtensionConfig, targetDirPath string) error {
+func Build(config Config, targetDirPath string) error {
 	b := crxmake.NewBuilder()
 
 	tempDir, err := ioutil.TempDir("", "gauche-links-build-extension")
@@ -140,7 +140,7 @@ func Build(config ExtensionConfig, targetDirPath string) error {
 	return nil
 }
 
-func zipExtension(dstFile *os.File, srcDir string) error {
+func zipExtension(dstFile io.Writer, srcDir string) error {
 	archive := zip.NewWriter(bufio.NewWriter(dstFile))
 	defer func() { _ = archive.Close() }()
 

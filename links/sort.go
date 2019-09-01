@@ -13,7 +13,8 @@ func (s LinkSliceByPath) Swap(i, j int) {
 }
 
 func (s LinkSliceByPath) Less(i, j int) bool {
-	return strings.Compare(s[i].LiteralPrefix(), s[j].LiteralPrefix()) < 0 || strings.Compare(s[i].PathString(), s[j].PathString()) < 0
+	return strings.Compare(s[i].LiteralPrefix(), s[j].LiteralPrefix()) < 0 ||
+		strings.Compare(s[i].PathString(), s[j].PathString()) < 0
 }
 
 type LinkSliceByPathLength []Link

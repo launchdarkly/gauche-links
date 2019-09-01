@@ -1,0 +1,15 @@
+linters:
+  enable-all: true
+  disable:
+    - gochecknoinits
+    - gochecknoglobals
+
+issues:
+  exclude-rules:
+    - path: "^tools/tools.go"
+      text: "is a program, not an importable package"
+      linters:
+        - typecheck
+
+run:
+  modules-download-mode: readonly

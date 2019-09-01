@@ -33,11 +33,11 @@ func (l RegexpLink) Len() int {
 }
 
 func (l RegexpLink) Match(path string) (bool, error) {
-	if linkRegExp, err := l.GetRegexp(); err != nil {
+	linkRegExp, err := l.GetRegexp()
+	if err != nil {
 		return false, err
-	} else {
-		return linkRegExp.MatchString(path), nil
 	}
+	return linkRegExp.MatchString(path), nil
 }
 
 // Transform returns the target for the given path

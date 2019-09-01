@@ -1,0 +1,26 @@
+repos:
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.17.1
+    hooks:
+      - id: golangci-lint
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-symlinks
+      - id: check-yaml
+
+  - repo: https://github.com/danielhoherd/pre-commit-circleci
+    rev: v0.0.3
+    hooks:
+      - id: circleci-validate
+
+  - repo: local
+    hooks:
+      - id: go-mod-verify
+        name: go mod verify
+        language: system
+        entry: go mod verify
+        pass_filenames: false

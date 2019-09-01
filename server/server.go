@@ -16,8 +16,6 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/gobuffalo/packr"
-
 	"github.com/kelseyhightower/envconfig"
 	"github.com/launchdarkly/gauche-links/framework"
 	"github.com/launchdarkly/gauche-links/framework/log"
@@ -57,10 +55,9 @@ var errorTemplate *template.Template
 var searchSpecTemplate *textTemplate.Template
 
 func init() {
-	box := packr.NewBox("./static/templates")
-	rootTemplate = template.Must(template.New("index").Parse(box.String("index.html")))
-	errorTemplate = template.Must(template.New("error").Parse(box.String("error.html")))
-	searchSpecTemplate = textTemplate.Must(textTemplate.New("searchSpec").Parse(box.String("search.xml")))
+	rootTemplate = template.Must(template.New("index").ParseFiles("templates/index.html"))
+	errorTemplate = template.Must(template.New("error").Parse("templates/error.html"))
+	searchSpecTemplate = textTemplate.Must(textTemplate.New("searchSpec").Parse("templates/search.xml"))
 }
 
 var config Config
@@ -167,7 +164,8 @@ func link(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("unable to fetch links: %s", err), http.StatusInternalServerError)
 	}
 
-	path := strings.Trim(r.URL.Path[1:], " \u200B") // Remove zero width unicode whitespace (caused by a hack we do in the extension)
+	// Remove zero width unicode whitespace (caused by a hack we do in the extension)
+	path := strings.Trim(r.URL.Path[1:], " \u200B")
 
 	isEdit := false
 	if strings.HasSuffix(path, "/edit") && path != "/edit" {
