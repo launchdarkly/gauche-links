@@ -10,6 +10,6 @@
     <Url type="text/html" method="GET" template="{{ .host }}/{searchTerms}"/>
     <Url type="application/x-moz-keywordsearch" method="GET" template="{{ .host }}/{searchTerms}"/>
     <Url type="application/x-opensearch+xml" method="GET" template="{{ .host }}/{searchTerms}"/>
-    <Url type="application/x-suggestions+json" template="{{ .host }}/_suggest?q={searchTerms}"/>
+    <Url type="application/x-suggestions+json" template="{{ .host }}/_search?q={searchTerms}"/>
     <moz:SearchForm>{{ .host }}</moz:SearchForm>
 </OpenSearchDescription>
