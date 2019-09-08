@@ -11,7 +11,8 @@ test: test-extensions
 test-extensions:
 	dir="$$(mktemp -d)"; \
 	trap 'rm -rf "$${dir}"' EXIT; \
-	go run . -extensions -prefix test -extensions-path "$${dir}"; \
+	go run . -extensions -prefix test -platform chrome -extensions-path "$${dir}"; \
+	go run . -extensions -prefix test -platform firefox -extensions-path "$${dir}"
 
 packr:
 	$(PACKR)

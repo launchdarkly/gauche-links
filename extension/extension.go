@@ -2,7 +2,7 @@ package extension
 
 import (
 	"archive/zip"
-	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -12,18 +12,18 @@ import (
 	"text/template"
 
 	"github.com/gobuffalo/packr"
-	"github.com/mcuadros/go-crxmake"
 )
 
 const TemplateSuffix = ".tmpl"
 
 type Config struct {
-	DevHost string
-	Host    string
-	Icon    string
-	Name    string
-	Prefix  string
-	Version string
+	DevHost  string
+	Host     string
+	Icon     string
+	Name     string
+	Prefix   string
+	Version  string
+	Platform string
 }
 
 var extensionBox packr.Box
@@ -33,13 +33,14 @@ func init() {
 }
 
 func Build(config Config, targetDirPath string) error {
-	b := crxmake.NewBuilder()
-
-	tempDir, err := ioutil.TempDir("", "gauche-links-build-extension")
+	fileName := fmt.Sprintf("%s_gauche_links_extension_%s_%s.zip", config.Prefix, config.Platform, config.Version)
+	path := filepath.Join(targetDirPath, fileName)
+	archive, err := os.Create(path)
 	if err != nil {
-		return err
+		return fmt.Errorf(`unable to create archive at "%s": %s`, path, err)
 	}
-	defer func() { _ = os.RemoveAll(tempDir) }()
+
+	zipFile := zip.NewWriter(archive)
 	if config.Icon != "" {
 		sourceIconFile, iconErr := os.Open(config.Icon)
 		if iconErr != nil {
@@ -47,141 +48,47 @@ func Build(config Config, targetDirPath string) error {
 		}
 		defer func() { _ = sourceIconFile.Close() }()
 		iconBaseName := filepath.Base(config.Icon)
-		iconFilePath := filepath.Join(tempDir, iconBaseName)
-		iconErr = copyFile(iconFilePath, config.Icon)
-		if iconErr != nil {
-			return fmt.Errorf(`unable to copy icon file "%s" to "%s": %s`, config.Icon, iconFilePath, iconErr)
+		if err := archiveFile(zipFile, iconBaseName, sourceIconFile); err != nil {
+			return err
 		}
 		config.Icon = iconBaseName
 	}
 
 	err = extensionBox.Walk(func(name string, file packr.File) (err error) {
-		targetPath := filepath.Join(tempDir, name)
+		destName := name
+		var r io.Reader = file
 		if strings.HasSuffix(name, TemplateSuffix) {
-			targetPath = targetPath[:len(targetPath)-len(TemplateSuffix)]
-		}
-		outputFile, openErr := os.OpenFile(targetPath, os.O_CREATE|os.O_WRONLY, 0600)
-		if openErr != nil {
-			return openErr
-		}
-		defer func() {
-			closeErr := outputFile.Close()
+			destName = destName[:len(destName)-len(TemplateSuffix)]
+			inputData, err := ioutil.ReadAll(file)
 			if err != nil {
-				err = closeErr
+				return fmt.Errorf(`unable to read template for "%s": %s`, name, err)
 			}
-		}()
-		err = func() error {
-			w := bufio.NewWriter(outputFile)
-			if strings.HasSuffix(name, TemplateSuffix) {
-				inputData, readErr := ioutil.ReadAll(file)
-				if readErr != nil {
-					return fmt.Errorf(`unable to read template for "%s": %s`, name, readErr)
-				}
-				tmpl, readErr := template.New(name).Parse(string(inputData))
-				if readErr != nil {
-					return fmt.Errorf(`unable to parse template for "%s": %s`, name, readErr)
-				}
-				if tmplErr := tmpl.Execute(w, config); tmplErr != nil {
-					return fmt.Errorf(`unable to execute template for "%s": %s`, name, tmplErr)
-				}
-			} else if _, copyErr := io.Copy(w, file); copyErr != nil {
-				return fmt.Errorf(`unable to copy file "%s": %s`, name, copyErr)
+			tmpl, err := template.New(name).Parse(string(inputData))
+			if err != nil {
+				return fmt.Errorf(`unable to parse template for "%s": %s`, name, err)
 			}
-			if flushErr := w.Flush(); flushErr != nil {
-				return flushErr
+			b := bytes.NewBuffer(nil)
+			if tmplErr := tmpl.Execute(b, config); tmplErr != nil {
+				return fmt.Errorf(`unable to execute template for "%s": %s`, name, tmplErr)
 			}
-			return nil
-		}()
-		return
+			r = bytes.NewReader(b.Bytes())
+		}
+		return archiveFile(zipFile, destName, r)
 	})
 	if err != nil {
-		return fmt.Errorf(`unable to generate templates for chrome extension: %s`, err)
-	}
-
-	if zipErr := b.BuildZip(tempDir); zipErr != nil {
-		return zipErr
-	}
-
-	chromeExtensionName := fmt.Sprintf("%s_gauche_links_extension_%s.crx", config.Prefix, config.Version)
-	chromeExtension, err := os.Create(filepath.Join(targetDirPath, chromeExtensionName))
-	if err != nil {
-		return fmt.Errorf("unable to create chrome extension: %s", err)
-	}
-
-	defer func() { _ = chromeExtension.Close() }()
-
-	err = b.WriteToFile(chromeExtension)
-	if err != nil {
-		return fmt.Errorf("unable to write chrome extension: %s", err)
-	}
-
-	firefoxExtensionName := fmt.Sprintf("%s_gauche_links_extension_%s.xpi", config.Prefix, config.Version)
-	firefoxExtension, err := os.Create(filepath.Join(targetDirPath, firefoxExtensionName))
-	if err != nil {
-		return fmt.Errorf("unable to create firefox extension: %s", err)
-	}
-
-	err = zipExtension(firefoxExtension, tempDir)
-	if err != nil {
-		return fmt.Errorf("unable to create firefox extension: %s", err)
-	}
-
-	zippedChromeExtensionName := fmt.Sprintf("%s_gauche_links_extension_%s.zip", config.Prefix, config.Version)
-	zippedChromeExtension, err := os.Create(filepath.Join(targetDirPath, zippedChromeExtensionName))
-	if err != nil {
-		return fmt.Errorf("unable to create zipped chrome extension: %s", err)
-	}
-
-	err = zipExtension(zippedChromeExtension, tempDir)
-	if err != nil {
-		return fmt.Errorf("unable to create zipped chrome extension: %s", err)
-	}
-
-	return nil
-}
-
-func zipExtension(dstFile io.Writer, srcDir string) error {
-	archive := zip.NewWriter(bufio.NewWriter(dstFile))
-	defer func() { _ = archive.Close() }()
-
-	err := filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if info.IsDir() {
-			return nil
-		}
-
-		writer, err := archive.Create(info.Name())
-		if err != nil {
-			return err
-		}
-
-		file, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-		defer func() { _ = file.Close() }()
-
-		_, err = io.Copy(writer, file)
 		return err
-	})
-	return err
+	}
+	return zipFile.Close()
 }
 
-func copyFile(dst string, src string) error {
-	srcFile, err := os.Open(src)
+func archiveFile(writer *zip.Writer, name string, src io.Reader) error {
+	w, err := writer.Create(name)
 	if err != nil {
-		return fmt.Errorf(`unable to read file at "%s": %s`, src, err)
+		return fmt.Errorf(`unable to create file named "%s": %s`, name, err)
 	}
-	defer func() { _ = srcFile.Close() }()
-
-	dstFile, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY, 0600)
+	_, err = io.Copy(w, src)
 	if err != nil {
-		return fmt.Errorf(`unable to write file "%s": %s`, dst, err)
+		return fmt.Errorf(`unable to write file named "%s": %s`, name, err)
 	}
-	defer func() { _ = dstFile.Close() }()
-	_, err = io.Copy(dstFile, srcFile)
-	return err
+	return nil
 }

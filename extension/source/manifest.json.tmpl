@@ -1,12 +1,14 @@
 {
   "name": "{{ .Name }}",
-  "description" : "To use, type '{{ .Prefix }}' plus a search term into the Omnibox.",
+  "description" : "To use, type '{{ .Prefix }}{{ if ne .Platform "firefox" }}/{{ end }}' plus a search term into the Omnibox.",
   "version": "{{ .Version }}",
+{{ if eq .Platform "firefox" }}
   "applications": {
     "gecko": {
       "id": "{735ba023-87a7-4167-8c5d-32d3b939cd5d}"
     }
   },
+{{ end }}
   "background": {
     "scripts": ["globals.js", "jquery-3.3.1.min.js", "lodash-4.17.5.full.min.js", "event.js"],
     "persistent": true
@@ -22,9 +24,8 @@
     "page": "options.html",
     "chrome_style": true
   },
-  "omnibox": { "keyword" : "{{ .Prefix }}/" },
+  "omnibox": { "keyword" : "{{ .Prefix }}{{ if ne .Platform "firefox" }}/{{ end }}" },
   "permissions": [
-    "{{ .Prefix }}/*",
     "*://{{ .Prefix }}/*",
     "http://localhost/*",
     "{{ .Host }}/*",

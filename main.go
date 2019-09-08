@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	var extensions bool
 	var version string
 	var prefix string
 	var host string
@@ -17,8 +16,8 @@ func main() {
 	var extensionsPath string
 	var icon string
 	var name string
+	var platform string
 
-	flag.BoolVar(&extensions, "extensions", false, "Set to true to build extensions")
 	flag.StringVar(&extensionsPath, "extensions-path", ".", "Path to place the extensions")
 	flag.StringVar(&icon, "icon", "", "Extension icon")
 	flag.StringVar(&version, "version", "0.0.0.0", "Extension version")
@@ -26,17 +25,19 @@ func main() {
 	flag.StringVar(&devHost, "dev-host", "http://localhost:8080", "Development host url")
 	flag.StringVar(&prefix, "prefix", "go", "Link prefix")
 	flag.StringVar(&name, "name", "GaucheLinks", "Extension name")
+	flag.StringVar(&platform, "extension", "", `Extension platform when generating extensions ("chrome" or "firefox")`)
 
 	flag.Parse()
 
-	if extensions {
+	if platform != "" {
 		config := extension.Config{
-			Prefix:  prefix,
-			Version: version,
-			Host:    host,
-			DevHost: devHost,
-			Icon:    icon,
-			Name:    name,
+			Prefix:   prefix,
+			Version:  version,
+			Host:     host,
+			DevHost:  devHost,
+			Icon:     icon,
+			Name:     name,
+			Platform: platform,
 		}
 		if err := extension.Build(config, extensionsPath); err != nil {
 			fmt.Fprintf(os.Stderr, "unable to build extensions: %s\n", err)
