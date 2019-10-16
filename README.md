@@ -70,7 +70,7 @@ _logout - Sign out of google.
 
 ## Deployment
 
-The GaucheLinks is currently organized to be easily deployable on the Google Cloud Platform.  There is code in the `demo/appengine` to show how to run it.  In our case at LaunchDarkly, we have a repo dedicated to deploying GaucheLinks via CircleCI, that starts with the name of our selected prefix.  [Here](https://github.com/launchdarkly/eg-gauche-links) is a repo that shows how you might deploy GuacheLinks with prefix `eg`.
+The GaucheLinks is currently organized to be easily deployable on the Google Cloud Platform.  There is code in the `demo/appengine` to show how to run it.  In our case at LaunchDarkly, we have a repo dedicated to deploying GaucheLinks via CircleCI, that starts with the name of our selected prefix.  [Here](https://github.com/launchdarkly-labs/eg-gauche-links) is a repo that shows how you might deploy GuacheLinks with prefix `eg`.
 
 ## Development
 
